@@ -20,6 +20,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /paddle/speech
+RUN mkdir -p /paddle/speech/logs
 COPY /speech /paddle/speech
 
 # list all files and folders in /paddle/speech

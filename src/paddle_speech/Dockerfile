@@ -4,9 +4,9 @@ FROM ubuntu:22.04
 ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 
-# 替换为清华大学镜像源以加速下载
-RUN sed -i 's@//.*archive.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list && \
-    sed -i 's@//.*security.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list
+# # 替换为清华大学镜像源以加速下载
+# RUN sed -i 's@//.*archive.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list && \
+#     sed -i 's@//.*security.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -22,6 +22,9 @@ RUN apt-get update && \
 RUN mkdir -p /paddle/speech
 COPY /speech /paddle/speech
 
+# list all files and folders in /paddle/speech
+RUN ls -l /paddle/speech
+
 EXPOSE 8090
 EXPOSE 8092
 
@@ -29,7 +32,7 @@ EXPOSE 8092
 WORKDIR /paddle
 
 # 设置 pip 统一源
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 安装编译依赖和基础包
 RUN pip install --upgrade pip setuptools wheel

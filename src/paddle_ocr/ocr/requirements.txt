@@ -1,0 +1,7 @@
+# Python依赖环境
+fastapi
+uvicorn
+python-multipart
+
+# PaddleOCR依赖
+paddleocr

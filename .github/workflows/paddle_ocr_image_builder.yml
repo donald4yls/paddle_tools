@@ -1,0 +1,41 @@
+name: Build and Push paddle_ocr
+
+on:
+  push:
+    paths:
+      - 'src/paddle_ocr/VERSION'
+
+env:
+    DOCKER_REPO_URL: registry.cn-hangzhou.aliyuncs.com/tools-repo/paddle_ocr
+    APP_PATH: src/paddle_ocr
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Read version
+        run: |
+          VERSION=$(cat ${{ env.APP_PATH }}/VERSION)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${VERSION}" >> $GITHUB_ENV
+
+      - name: Login to Aliyun Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: ${{ secrets.ALIYUN_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+          
+      - name: Build and Push Docker Image
+        working-directory: ${{ env.APP_PATH }}
+        run: |
+          docker build -t ${{ env.DOCKER_REPO_URL }}:${IMAGE_TAG} .
+          docker tag ${{ env.DOCKER_REPO_URL }}:${IMAGE_TAG} ${{ env.DOCKER_REPO_URL }}:latest
+          docker push ${{ env.DOCKER_REPO_URL }}:${IMAGE_TAG}
+          docker push ${{ env.DOCKER_REPO_URL }}:latest
